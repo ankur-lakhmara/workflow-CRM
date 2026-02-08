@@ -33,7 +33,7 @@ public class LeadService {
         lead.setSource(LeadSource.WEB);
         lead.setTenant(tenant);
         lead.setCreated_at(new Date());
-        System.out.println("assignedUserId = " + req.getAssignedUserId());
+//        System.out.println("assignedUserId = " + req.getAssignedUserId());
         if(req.getAssignedUserId()!=null){
             UserEntity user = userRepository.
                     findById(req.getAssignedUserId())

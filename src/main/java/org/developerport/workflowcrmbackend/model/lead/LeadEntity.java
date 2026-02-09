@@ -18,13 +18,15 @@ public class LeadEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private LeadSource source;
+    @Enumerated(EnumType.STRING)
     private LeadStatus status;
     private Date created_at;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="tenant_id", nullable = false)
     private TenantEntity tenant;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name="user_id", nullable = true)
     private UserEntity assignedUserId;
 }

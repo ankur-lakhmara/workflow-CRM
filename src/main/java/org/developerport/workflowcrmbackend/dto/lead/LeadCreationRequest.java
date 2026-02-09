@@ -8,5 +8,4 @@ import lombok.Data;
 public class LeadCreationRequest {
     private String name;
     private String source;
-    private Integer assignedUserId;
 }

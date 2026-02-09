@@ -23,28 +23,50 @@ public class LeadService {
 
 
     @Transactional
-    public void createLead(LeadCreationRequest req, Integer tenantId){
-        System.out.println("reached step 1");
+    public void createLead(LeadCreationRequest req, Integer tenantId, String role){
         TenantEntity tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(()->new RuntimeException("tenant not found"));
-        System.out.println("My tenant is "+tenant);
+//        System.out.println("My tenant is "+tenant);
+        if(!role.equals("MANAGER") && !role.equals("ADMIN")){
+            throw new RuntimeException("You are not allowed to create lead");
+        }
         LeadEntity lead = new LeadEntity();
         lead.setName(req.getName());
         lead.setSource(LeadSource.WEB);
         lead.setTenant(tenant);
         lead.setCreated_at(new Date());
 //        System.out.println("assignedUserId = " + req.getAssignedUserId());
-        if(req.getAssignedUserId()!=null){
-            UserEntity user = userRepository.
-                    findById(req.getAssignedUserId())
-                    .orElseThrow(()->new RuntimeException("Assigned User not found "));
-            if(user.getTenant().getId() != tenantId){
-                throw new RuntimeException("User doesn't belongs to this tenant");
-            }
-            lead.setAssignedUserId(user);
-        }
+//        if(req.getAssignedUserId()!=null){
+//            UserEntity user = userRepository.
+//                    findById(req.getAssignedUserId())
+//                    .orElseThrow(()->new RuntimeException("Assigned User not found "));
+//            if(user.getTenant().getId() != tenantId){
+//                throw new RuntimeException("User doesn't belongs to this tenant");
+//            }
+//            lead.setAssignedUserId(user);
+//        }
+        System.out.println(lead);
         leadRepository.save(lead);
+    }
 
+    @Transactional
+    public void assignLead(Integer leadId, Integer userId, Integer tenantId, String role){
+        //role validation ...
+        if(!role.equals("ADMIN") && !role.equals("MANAGER")){
+            throw new RuntimeException("Not allowed to assign lead");
+        }
+        //fetching lead that try to assign
+        LeadEntity lead = leadRepository.
+                findByIdAndTenantId(leadId,tenantId)
+                .orElseThrow(()->new RuntimeException("Leadnot found"));
+
+        //fetch the user try to assign
+        UserEntity user = userRepository
+                .findByIdAndTenantId(userId, tenantId)
+                .orElseThrow(()->new RuntimeException("User not found"));
+        //assign the lead
+        lead.setAssignedUserId(user);
+        leadRepository.save(lead);
     }
 
 }

@@ -27,6 +27,10 @@ public class LeadEntity {
     @JoinColumn(name ="tenant_id", nullable = false)
     private TenantEntity tenant;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable = true)
+    @JoinColumn(name="assigned_to", nullable = true)
     private UserEntity assignedUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn( name= "created_by", nullable = false)
+    private UserEntity created_by;
+
 }

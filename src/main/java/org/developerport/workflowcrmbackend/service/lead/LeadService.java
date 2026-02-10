@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.developerport.workflowcrmbackend.dto.lead.LeadCreationRequest;
 import org.developerport.workflowcrmbackend.model.lead.LeadEntity;
 import org.developerport.workflowcrmbackend.model.lead.LeadSource;
+import org.developerport.workflowcrmbackend.model.lead.LeadStatus;
 import org.developerport.workflowcrmbackend.model.tenant.TenantEntity;
 import org.developerport.workflowcrmbackend.model.user.UserEntity;
 import org.developerport.workflowcrmbackend.repository.LeadRepository;
@@ -12,6 +13,7 @@ import org.developerport.workflowcrmbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.Inet4Address;
 import java.util.Date;
 
 @Service
@@ -58,15 +60,24 @@ public class LeadService {
         //fetching lead that try to assign
         LeadEntity lead = leadRepository.
                 findByIdAndTenantId(leadId,tenantId)
-                .orElseThrow(()->new RuntimeException("Leadnot found"));
+                .orElseThrow(()->new RuntimeException("Lead not found"));
 
+//        System.out.println("this is lead"+lead.getAssignedUserId());
+        //checking is the lead is already assigned to any user or not
+        if(lead.getAssignedUserId() != null){
+            throw new RuntimeException("Lead is already assigned ");
+        }
         //fetch the user try to assign
         UserEntity user = userRepository
                 .findByIdAndTenantId(userId, tenantId)
                 .orElseThrow(()->new RuntimeException("User not found"));
+
         //assign the lead
         lead.setAssignedUserId(user);
+        lead.setStatus(LeadStatus.NEW);
         leadRepository.save(lead);
     }
 
+//    @Transactional
+//    public void UpdateStatus(Integer leadId, Integer user)
 }
